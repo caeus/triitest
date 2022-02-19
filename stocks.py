@@ -1,7 +1,9 @@
 import argparse
 from enum import Enum
 import requests
+import pprint 
 
+pp = pprint.PrettyPrinter(indent=4)
 ##Commons
 
 class Stock(Enum):
@@ -26,6 +28,7 @@ def get_price_safe(stock:Stock):
     try:
         return get_stock_data(stock)['price']
     except:
+        ##return 123.5
         raise Exception(f'No stock price for {stock}')
 
 
@@ -84,7 +87,8 @@ def optimize(amount:float):
     result= optimize_aux(prices,len(prices)-1,amount-min_amount_allowed,{})
     
     return {
-        'remaining':amount-result['value'],
+        'prices': prices,
+        'remaining':amount-result['value']-min_amount_allowed,
         'diversification':{ 
             price['stock']:result['diversification'].get(price['stock'],0)+1 for price in prices
             }}
@@ -109,6 +113,6 @@ args= parser.parse_args()
 
 
 if(args.option == 'optimize'):
-    print(optimize(args.amount))
+    pp.pprint(optimize(args.amount))
 elif(args.option == 'all'):
-    print(all(args.stock))
+    pp.pprint(all(args.stock))
